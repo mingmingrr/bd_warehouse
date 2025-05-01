@@ -689,6 +689,7 @@ class AcmeThread(TrapezoidalThread):
         mode (Mode, optional): combination mode. Defaults to Mode.ADD.
 
     Raises:
+        ValueError: size must be fractional between 1/4 and 3
         ValueError: hand must be one of "right" or "left"
         ValueError: end_finishes invalid, must be tuple() of "raw, square, taper, or chamfer"
 
@@ -739,7 +740,9 @@ class AcmeThread(TrapezoidalThread):
         mode: Mode = Mode.ADD,
     ):
         diameter = imperial_str_to_float(size)
-        pitch = AcmeThread.acme_pitch[size]
+        pitch = AcmeThread.acme_pitch.get(size)
+        if pitch is None:
+            raise ValueError('size must be fractional between 1/4 and 3')
         super().__init__(
             diameter=diameter,
             pitch=pitch,
